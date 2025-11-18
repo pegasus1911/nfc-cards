@@ -2,9 +2,32 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const multer = require('multer');
+require('dotenv').config(); // load .env
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// ---------- ADMIN AUTH SETUP ----------
+const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+const ADMIN_PASS = process.env.ADMIN_PASS || 'change-this-password';
+
+function adminAuth(req, res, next) {
+  const header = req.headers.authorization || '';
+  if (!header.startsWith('Basic ')) {
+    res.set('WWW-Authenticate', 'Basic realm="NFC Admin"');
+    return res.status(401).send('Authentication required');
+  }
+
+  const base64 = header.split(' ')[1];
+  const [user, pass] = Buffer.from(base64, 'base64').toString().split(':');
+
+  if (user === ADMIN_USER && pass === ADMIN_PASS) {
+    return next();
+  }
+
+  res.set('WWW-Authenticate', 'Basic realm="NFC Admin"');
+  return res.status(401).send('Authentication required');
+}
 
 // ---------- DATA & UPLOADS SETUP ----------
 const DATA_DIR = path.join(__dirname, 'data');
@@ -91,8 +114,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ---------- API ROUTES ----------
 
-// list all cards (admin)
-app.get('/api/cards', (req, res) => {
+// list all cards (admin only)
+app.get('/api/cards', adminAuth, (req, res) => {
   const list = cards.map(c => ({
     slug: c.slug,
     fullName: c.fullName,
@@ -102,7 +125,7 @@ app.get('/api/cards', (req, res) => {
   res.json(list);
 });
 
-// get single card by slug (public/admin)
+// get single card by slug (PUBLIC - used by /u/:slug)
 app.get('/api/cards/:slug', (req, res) => {
   const slug = (req.params.slug || '').toLowerCase();
   const card = cards.find(c => c.slug.toLowerCase() === slug);
@@ -114,8 +137,8 @@ app.get('/api/cards/:slug', (req, res) => {
   res.json(card);
 });
 
-// create new card (with optional avatar file)
-app.post('/api/cards', upload.single('avatarFile'), (req, res) => {
+// create new card (admin only, with optional avatar file)
+app.post('/api/cards', adminAuth, upload.single('avatarFile'), (req, res) => {
   const {
     slug,
     fullName,
@@ -170,8 +193,8 @@ app.post('/api/cards', upload.single('avatarFile'), (req, res) => {
   });
 });
 
-// update existing card (optional new avatar file)
-app.put('/api/cards/:slug', upload.single('avatarFile'), (req, res) => {
+// update existing card (admin only, optional new avatar file)
+app.put('/api/cards/:slug', adminAuth, upload.single('avatarFile'), (req, res) => {
   const paramSlug = (req.params.slug || '').toLowerCase().trim();
   const index = cards.findIndex(c => c.slug.toLowerCase() === paramSlug);
 
@@ -230,8 +253,8 @@ app.get('/u/:slug', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'card.html'));
 });
 
-// admin page
-app.get('/admin', (req, res) => {
+// admin page (protected)
+app.get('/admin', adminAuth, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 

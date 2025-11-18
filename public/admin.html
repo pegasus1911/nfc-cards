@@ -187,7 +187,8 @@
 
     <form id="cardForm" enctype="multipart/form-data">
       <div class="field">
-        <label for="slug">Slug (unique URL)</label>
+        <!-- <label for="slug">Slug (unique URL)</label> -->
+        <label for="slug">ID</label>
         <input id="slug" name="slug" required placeholder="ali-hasan" />
       </div>
 
@@ -203,7 +204,7 @@
         </div>
         <div class="field">
           <label for="company">Company</label>
-          <input id="company" name="company" placeholder="My Company" />
+          <input id="company" name="company" placeholder=" " />
         </div>
       </div>
 
@@ -243,7 +244,7 @@
       <div class="field">
         <label>
           <input type="checkbox" id="rtl" name="rtl" style="width:auto;margin-right:6px;accent-color:#d4af37;" />
-          Arabic layout (RTL)
+          Arabic layout 
         </label>
       </div>
 
@@ -251,7 +252,7 @@
       <input type="hidden" id="avatarUrl" name="avatarUrl" />
 
       <div class="field">
-        <label for="avatarFile">Profile photo (optional)</label>
+        <label for="avatarFile">Profile photo </label>
         <input id="avatarFile" name="avatarFile" type="file" accept="image/*" />
       </div>
 
@@ -262,7 +263,7 @@
     <div id="msg" class="msg"></div>
 
     <p class="tip">
-      Tip: After creating or updating a card, write its URL on the NFC tag.
+      <!-- Tip: After creating or updating a card, write its URL on the NFC tag. -->
     </p>
 
     <h2>Existing cards</h2>

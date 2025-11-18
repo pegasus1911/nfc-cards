@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NFC Digital Business Card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #222, #000);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px 12px;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 720px;
+      background: rgba(15, 15, 15, 0.96);
+      border-radius: 20px;
+      padding: 26px 22px 24px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      font-size: 0.78rem;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+
+    .badge span {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #2ecc71;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+
+    h1 strong {
+      background: linear-gradient(135deg, #d4af37, #ffdd88);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    p.lead {
+      font-size: 0.95rem;
+      opacity: 0.85;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .feature {
+      padding: 10px 10px 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.85rem;
+    }
+
+    .feature-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 0.86rem;
+    }
+
+    .feature p {
+      opacity: 0.8;
+      line-height: 1.4;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+      margin-bottom: 6px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: none;
+      text-decoration: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #d4af37, #8b5e34);
+      color: #000;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid rgba(212, 175, 55, 0.7);
+      color: #f5f5f5;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .footer {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="badge">
+      <span></span>
+      <div>Tap • Scan • Share your contact in 1 second</div>
+    </div>
+
+    <h1>
+      NFC <strong>Digital Business Card</strong>
+    </h1>
+
+    <p class="lead">
+      One smart card. All your details. When someone taps your NFC card with their phone,
+      it opens a personal profile with your phone number, WhatsApp, email, and social links —
+      no apps or paper cards needed.
+    </p>
+
+    <div class="features">
+      <div class="feature">
+        <div class="feature-title">Premium design</div>
+        <p>
+          A clean dark & gold card layout that works great on any phone screen,
+          with support for profile photo and custom branding.
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-title">NFC ready</div>
+        <p>
+          Each profile gets a unique URL that can be written to any NFC card or tag
+          in just a few seconds.
+        </p>
+      </div>
+      <div class="feature">
+        <div class="feature-title">Easy to update</div>
+        <p>
+          Update your details or profile photo from a simple admin panel —
+          no need to print new cards ever again.
+        </p>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a href="/u/ali" class="btn btn-primary">View sample card</a>
+      <a href="https://wa.me/97366646569" class="btn btn-secondary" target="_blank">
+        Chat with us on WhatsApp
+      </a>
+    </div>
+
+    <div class="footer">
+      <div>Perfect for business owners, sales teams, and freelancers.</div>
+      <div>Powered by Alsayadi NFC</div>
+    </div>
+  </div>
+</body>
+</html>
