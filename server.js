@@ -2,11 +2,12 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const multer = require('multer');
-require('dotenv').config(); 
+require('dotenv').config(); // load .env
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ---------- ADMIN AUTH SETUP ----------
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'change-this-password';
 
@@ -28,6 +29,7 @@ function adminAuth(req, res, next) {
   return res.status(401).send('Authentication required');
 }
 
+// ---------- DATA & UPLOADS SETUP ----------
 const DATA_DIR = path.join(__dirname, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'cards.json');
 const UPLOAD_DIR = path.join(__dirname, 'public', 'uploads');
@@ -39,6 +41,7 @@ if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
 
+// Multer storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, UPLOAD_DIR);
@@ -68,10 +71,23 @@ const upload = multer({
 
 let cards = [];
 
+// تحميل الكروت من الملف
 function loadCards() {
   try {
     const raw = fs.readFileSync(DATA_FILE, 'utf8');
     cards = JSON.parse(raw);
+
+    // تأكد إن كل كارت فيه views حتى لو ملف قديم
+    cards.forEach(c => {
+  if (typeof c.views !== 'number') {
+    c.views = 0;
+  }
+  if (typeof c.viewsMonth !== 'number') {
+    c.viewsMonth = 0;
+  }
+});
+
+
     console.log(`Loaded ${cards.length} cards from file.`);
   } catch (err) {
     console.log('No cards file found, seeding default card...');
@@ -88,13 +104,15 @@ function loadCards() {
         linkedin: 'https://linkedin.com/in/ali',
         instagram: 'https://instagram.com/ali',
         avatarUrl: '',
-        rtl: false
+        rtl: false,
+        views: 0
       }
     ];
     saveCards();
   }
 }
 
+// حفظ الكروت
 function saveCards() {
   fs.writeFileSync(DATA_FILE, JSON.stringify(cards, null, 2), 'utf8');
   console.log(`Saved ${cards.length} cards to file.`);
@@ -102,32 +120,47 @@ function saveCards() {
 
 loadCards();
 
+// ---------- MIDDLEWARE ----------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// ---------- API ROUTES ----------
 
+// list all cards (admin only)
 app.get('/api/cards', adminAuth, (req, res) => {
   const list = cards.map(c => ({
     slug: c.slug,
     fullName: c.fullName,
     jobTitle: c.jobTitle,
-    company: c.company
+    company: c.company,
+    views: c.views || 0
   }));
   res.json(list);
 });
 
+// get single card by slug (PUBLIC - used by /u/:slug)
+// ?track=1 → نزود العداد
 app.get('/api/cards/:slug', (req, res) => {
   const slug = (req.params.slug || '').toLowerCase();
+  const track = req.query.track === '1';
   const card = cards.find(c => c.slug.toLowerCase() === slug);
 
   if (!card) {
     return res.status(404).json({ error: 'Card not found' });
   }
 
+  if (track) {
+  card.views = (card.views || 0) + 1;
+  card.viewsMonth = (card.viewsMonth || 0) + 1;
+  saveCards();
+}
+
+
   res.json(card);
 });
 
+// create new card (admin only, with optional avatar file)
 app.post('/api/cards', adminAuth, upload.single('avatarFile'), (req, res) => {
   const {
     slug,
@@ -140,7 +173,7 @@ app.post('/api/cards', adminAuth, upload.single('avatarFile'), (req, res) => {
     website,
     linkedin,
     instagram,
-    avatarUrl, 
+    avatarUrl, // hidden field (optional)
     rtl
   } = req.body;
 
@@ -171,7 +204,8 @@ app.post('/api/cards', adminAuth, upload.single('avatarFile'), (req, res) => {
     linkedin: (linkedin || '').trim(),
     instagram: (instagram || '').trim(),
     avatarUrl: finalAvatarUrl,
-    rtl: rtl === 'on' || rtl === 'true' || rtl === '1'
+    rtl: rtl === 'on' || rtl === 'true' || rtl === '1',
+    views: 0
   };
 
   cards.push(newCard);
@@ -183,6 +217,7 @@ app.post('/api/cards', adminAuth, upload.single('avatarFile'), (req, res) => {
   });
 });
 
+// update existing card (admin only, optional new avatar file)
 app.put('/api/cards/:slug', adminAuth, upload.single('avatarFile'), (req, res) => {
   const paramSlug = (req.params.slug || '').toLowerCase().trim();
   const index = cards.findIndex(c => c.slug.toLowerCase() === paramSlug);
@@ -227,6 +262,7 @@ app.put('/api/cards/:slug', adminAuth, upload.single('avatarFile'), (req, res) =
     card.rtl = rtl === 'on' || rtl === 'true' || rtl === '1';
   }
 
+  // views مش هنلمسها في الـ update
   saveCards();
 
   return res.json({
@@ -235,15 +271,19 @@ app.put('/api/cards/:slug', adminAuth, upload.single('avatarFile'), (req, res) =
   });
 });
 
+// ---------- PAGES ----------
 
+// public card page
 app.get('/u/:slug', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'card.html'));
 });
 
+// admin page (protected)
 app.get('/admin', adminAuth, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
+// ---------- START SERVER ----------
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
 });

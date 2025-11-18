@@ -1,9 +1,11 @@
 async function loadCard() {
   try {
+    // نجيب الـ slug من الـ URL
     const parts = window.location.pathname.split('/');
     const slug = parts[parts.length - 1];
 
-    const res = await fetch(`/api/cards/${slug}`);
+    // نستخدم track=1 عشان نزود عدد الزيارات
+    const res = await fetch(`/api/cards/${slug}?track=1`);
     if (!res.ok) {
       document.body.innerHTML = '<p style="color:white;text-align:center;">Card not found</p>';
       return;
@@ -11,6 +13,7 @@ async function loadCard() {
 
     const card = await res.json();
 
+    // RTL support
     if (card.rtl) {
       document.documentElement.dir = 'rtl';
       document.body.classList.add('rtl');
@@ -19,6 +22,7 @@ async function loadCard() {
       document.body.classList.remove('rtl');
     }
 
+    // نملأ البيانات في الصفحة
     document.getElementById('fullName').textContent = card.fullName || '';
     document.getElementById('jobTitle').textContent = card.jobTitle || '';
     document.getElementById('company').textContent = card.company || '';
@@ -30,6 +34,7 @@ async function loadCard() {
       avatarImg.style.display = 'none';
     }
 
+    // أزرار التواصل
     const callBtn = document.getElementById('callBtn');
     const whatsappBtn = document.getElementById('whatsappBtn');
     const emailBtn = document.getElementById('emailBtn');
@@ -74,6 +79,7 @@ async function loadCard() {
       instagramBtn.style.display = 'none';
     }
 
+    // زرار Save Contact (vCard)
     const saveBtn = document.getElementById('saveContactBtn');
     saveBtn.addEventListener('click', () => {
       const vcardLines = [

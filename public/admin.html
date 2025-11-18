@@ -187,7 +187,7 @@
 
     <form id="cardForm" enctype="multipart/form-data">
       <div class="field">
-        <label for="slug">ID</label>
+        <label for="slug">Slug (unique URL)</label>
         <input id="slug" name="slug" required placeholder="ali-hasan" />
       </div>
 
@@ -203,7 +203,7 @@
         </div>
         <div class="field">
           <label for="company">Company</label>
-          <input id="company" name="company" placeholder=" " />
+          <input id="company" name="company" placeholder="My Company" />
         </div>
       </div>
 
@@ -239,17 +239,19 @@
         </div>
       </div>
 
+      <!-- RTL flag -->
       <div class="field">
         <label>
           <input type="checkbox" id="rtl" name="rtl" style="width:auto;margin-right:6px;accent-color:#d4af37;" />
-          Arabic layout 
+          Arabic layout (RTL)
         </label>
       </div>
 
+      <!-- hidden avatarUrl to keep existing path when editing -->
       <input type="hidden" id="avatarUrl" name="avatarUrl" />
 
       <div class="field">
-        <label for="avatarFile">Profile photo </label>
+        <label for="avatarFile">Profile photo (optional)</label>
         <input id="avatarFile" name="avatarFile" type="file" accept="image/*" />
       </div>
 
@@ -260,6 +262,7 @@
     <div id="msg" class="msg"></div>
 
     <p class="tip">
+      Tip: After creating or updating a card, write its URL on the NFC tag.
     </p>
 
     <h2>Existing cards</h2>
@@ -310,16 +313,18 @@
         }
 
         let html = '<table><thead><tr>' +
-          '<th>Slug</th><th>Name</th><th>Company</th><th>Link</th><th>Actions</th>' +
+          '<th>Slug</th><th>Name</th><th>Company</th><th>Views</th><th>Link</th><th>Actions</th>' +
           '</tr></thead><tbody>';
 
         html += cards.map(c => {
           const url = `${baseUrl}/u/${c.slug}`;
+          const views = typeof c.views === 'number' ? c.views : 0;
           return `
             <tr>
               <td class="slug">${c.slug}</td>
               <td>${c.fullName || ''}</td>
               <td>${c.company || ''}</td>
+              <td>${views}</td>
               <td><a class="card-link" href="${url}" target="_blank">open</a></td>
               <td><a class="card-link" href="#" onclick="startEdit('${c.slug}');return false;">edit</a></td>
             </tr>
@@ -362,7 +367,8 @@
         cancelEditBtn.style.display = 'block';
 
         msg.style.color = '#ffffff';
-        msg.textContent = 'Editing card: ' + card.slug;
+        const viewsText = typeof card.views === 'number' ? ` | Views: ${card.views}` : '';
+        msg.textContent = 'Editing card: ' + card.slug + viewsText;
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch (e) {
