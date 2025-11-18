@@ -1,0 +1,17 @@
+# Node modules
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Env / secrets
+.env
+.env.*
+
+# Local data for this project
+data/cards.json
+public/uploads
+
+# OS junk
+.DS_Store
+Thumbs.db

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - NFC Cards</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #222, #000);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 12px 40px;
+      color: #fff;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      background: rgba(15, 15, 15, 0.96);
+      border-radius: 18px;
+      padding: 20px 18px 22px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    h1 {
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    p.subtitle {
+      font-size: 0.85rem;
+      opacity: 0.8;
+      margin-bottom: 16px;
+    }
+
+    .field {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.5);
+      color: #f5f5f5;
+      font-size: 0.9rem;
+    }
+
+    input::placeholder {
+      opacity: 0.5;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .row .field {
+      flex: 1;
+    }
+
+    button {
+      margin-top: 8px;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      background: linear-gradient(135deg, #d4af37, #8b5e34);
+      color: #000;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    #cancelEditBtn {
+      margin-top: 6px;
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: transparent;
+      color: #f5f5f5;
+      font-size: 0.85rem;
+      display: none;
+      cursor: pointer;
+    }
+
+    #cancelEditBtn:active {
+      transform: scale(0.97);
+    }
+
+    .msg {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      min-height: 1.2em;
+    }
+
+    .msg a {
+      color: #d4af37;
+    }
+
+    .tip {
+      margin-top: 16px;
+      font-size: 0.78rem;
+      opacity: 0.65;
+    }
+
+    h2 {
+      margin-top: 22px;
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    #cardsList {
+      margin-top: 6px;
+      font-size: 0.82rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 4px;
+    }
+
+    thead {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    th, td {
+      padding: 6px 4px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    th {
+      font-weight: 600;
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+
+    td.slug {
+      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.8rem;
+    }
+
+    a.card-link {
+      color: #d4af37;
+      text-decoration: none;
+      font-size: 0.8rem;
+    }
+
+    a.card-link:hover {
+      text-decoration: underline;
+    }
+
+    .empty {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>NFC Cards Admin</h1>
+    <p class="subtitle">Add or edit digital business cards.</p>
+
+    <form id="cardForm" enctype="multipart/form-data">
+      <div class="field">
+        <label for="slug">Slug (unique URL)</label>
+        <input id="slug" name="slug" required placeholder="ali-hasan" />
+      </div>
+
+      <div class="field">
+        <label for="fullName">Full Name</label>
+        <input id="fullName" name="fullName" required placeholder="Ali Hasan" />
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="jobTitle">Job Title</label>
+          <input id="jobTitle" name="jobTitle" placeholder="Software Engineer" />
+        </div>
+        <div class="field">
+          <label for="company">Company</label>
+          <input id="company" name="company" placeholder="My Company" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="phone">Phone</label>
+          <input id="phone" name="phone" placeholder="+9733..." />
+        </div>
+        <div class="field">
+          <label for="whatsapp">WhatsApp</label>
+          <input id="whatsapp" name="whatsapp" placeholder="+9733..." />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" placeholder="name@example.com" />
+      </div>
+
+      <div class="field">
+        <label for="website">Website</label>
+        <input id="website" name="website" placeholder="https://example.com" />
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="linkedin">LinkedIn</label>
+          <input id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/..." />
+        </div>
+        <div class="field">
+          <label for="instagram">Instagram</label>
+          <input id="instagram" name="instagram" placeholder="https://instagram.com/..." />
+        </div>
+      </div>
+
+      <!-- RTL flag -->
+      <div class="field">
+        <label>
+          <input type="checkbox" id="rtl" name="rtl" style="width:auto;margin-right:6px;accent-color:#d4af37;" />
+          Arabic layout (RTL)
+        </label>
+      </div>
+
+      <!-- hidden avatarUrl to keep existing path when editing -->
+      <input type="hidden" id="avatarUrl" name="avatarUrl" />
+
+      <div class="field">
+        <label for="avatarFile">Profile photo (optional)</label>
+        <input id="avatarFile" name="avatarFile" type="file" accept="image/*" />
+      </div>
+
+      <button type="submit">Create Card</button>
+      <button type="button" id="cancelEditBtn">Cancel edit</button>
+    </form>
+
+    <div id="msg" class="msg"></div>
+
+    <p class="tip">
+      Tip: After creating or updating a card, write its URL on the NFC tag.
+    </p>
+
+    <h2>Existing cards</h2>
+    <div id="cardsList" class="cards-list"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('cardForm');
+    const msg = document.getElementById('msg');
+    const cardsList = document.getElementById('cardsList');
+    const baseUrl = window.location.origin;
+    const submitBtn = document.querySelector('#cardForm button[type="submit"]');
+    const slugInput = document.getElementById('slug');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const avatarUrlInput = document.getElementById('avatarUrl');
+    const avatarFileInput = document.getElementById('avatarFile');
+    const rtlInput = document.getElementById('rtl');
+
+    let editMode = false;
+    let editingSlug = null;
+
+    function resetFormToCreateMode() {
+      editMode = false;
+      editingSlug = null;
+      submitBtn.textContent = 'Create Card';
+      slugInput.readOnly = false;
+      form.reset();
+      avatarUrlInput.value = '';
+      rtlInput.checked = false;
+      cancelEditBtn.style.display = 'none';
+    }
+
+    cancelEditBtn.addEventListener('click', () => {
+      resetFormToCreateMode();
+      msg.textContent = '';
+    });
+
+    async function loadCardsList() {
+      try {
+        const res = await fetch('/api/cards');
+        if (!res.ok) throw new Error('Failed to load cards');
+
+        const cards = await res.json();
+
+        if (!cards.length) {
+          cardsList.innerHTML = '<p class="empty">No cards yet.</p>';
+          return;
+        }
+
+        let html = '<table><thead><tr>' +
+          '<th>Slug</th><th>Name</th><th>Company</th><th>Link</th><th>Actions</th>' +
+          '</tr></thead><tbody>';
+
+        html += cards.map(c => {
+          const url = `${baseUrl}/u/${c.slug}`;
+          return `
+            <tr>
+              <td class="slug">${c.slug}</td>
+              <td>${c.fullName || ''}</td>
+              <td>${c.company || ''}</td>
+              <td><a class="card-link" href="${url}" target="_blank">open</a></td>
+              <td><a class="card-link" href="#" onclick="startEdit('${c.slug}');return false;">edit</a></td>
+            </tr>
+          `;
+        }).join('');
+
+        html += '</tbody></table>';
+        cardsList.innerHTML = html;
+      } catch (e) {
+        console.error(e);
+        cardsList.innerHTML = '<p class="empty">Error loading cards list.</p>';
+      }
+    }
+
+    async function startEdit(slug) {
+      try {
+        const res = await fetch('/api/cards/' + slug);
+        if (!res.ok) throw new Error('Card not found');
+
+        const card = await res.json();
+
+        slugInput.value = card.slug || '';
+        document.getElementById('fullName').value = card.fullName || '';
+        document.getElementById('jobTitle').value = card.jobTitle || '';
+        document.getElementById('company').value = card.company || '';
+        document.getElementById('phone').value = card.phone || '';
+        document.getElementById('whatsapp').value = card.whatsapp || '';
+        document.getElementById('email').value = card.email || '';
+        document.getElementById('website').value = card.website || '';
+        document.getElementById('linkedin').value = card.linkedin || '';
+        document.getElementById('instagram').value = card.instagram || '';
+        avatarUrlInput.value = card.avatarUrl || '';
+        avatarFileInput.value = '';
+        rtlInput.checked = !!card.rtl;
+
+        editMode = true;
+        editingSlug = card.slug;
+        submitBtn.textContent = 'Update Card';
+        slugInput.readOnly = true;
+        cancelEditBtn.style.display = 'block';
+
+        msg.style.color = '#ffffff';
+        msg.textContent = 'Editing card: ' + card.slug;
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (e) {
+        console.error(e);
+        msg.style.color = '#ff8888';
+        msg.textContent = 'Error loading card for edit';
+      }
+    }
+
+    window.startEdit = startEdit;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.style.color = '#ffffff';
+      msg.textContent = editMode ? 'Updating...' : 'Saving...';
+
+      const formData = new FormData(form);
+      // نخلي rtl يتبعت دايمًا (حتى لو unchecked)
+      formData.set('rtl', rtlInput.checked ? 'on' : 'off');
+
+      const url = editMode ? '/api/cards/' + editingSlug : '/api/cards';
+      const method = editMode ? 'PUT' : 'POST';
+
+      try {
+        const res = await fetch(url, {
+          method,
+          body: formData
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          msg.style.color = '#ff8888';
+          msg.textContent = err.error || (editMode ? 'Error updating card' : 'Error saving card');
+          return;
+        }
+
+        const json = await res.json();
+        await loadCardsList();
+
+        if (editMode) {
+          resetFormToCreateMode();
+          msg.style.color = '#a4ff9c';
+          msg.innerHTML = `
+            Card updated successfully.<br/>
+            <a href="/u/${json.slug}" target="_blank">Open /u/${json.slug}</a>
+          `;
+        } else {
+          msg.style.color = '#a4ff9c';
+          msg.innerHTML = `
+            Card created successfully.<br/>
+            <a href="/u/${json.slug}" target="_blank">Open /u/${json.slug}</a>
+          `;
+          form.reset();
+        }
+      } catch (error) {
+        console.error(error);
+        msg.style.color = '#ff8888';
+        msg.textContent = 'Network error';
+      }
+    });
+
+    loadCardsList();
+  </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Digital Business Card</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="card-wrapper">
+    <div class="card">
+      <div class="avatar">
+        <img id="avatar" src="../pictures/ali pic.png"/>
+      </div>
+
+      <h1 id="fullName">Loading...</h1>
+      <p id="jobTitle" class="job"></p>
+      <p id="company" class="company"></p>
+
+      <div class="buttons">
+        <a id="callBtn" class="btn" target="_blank">Call</a>
+        <a id="whatsappBtn" class="btn" target="_blank">WhatsApp</a>
+        <a id="emailBtn" class="btn" target="_blank">Email</a>
+        <a id="websiteBtn" class="btn" target="_blank">Website</a>
+      </div>
+
+      <div class="social">
+        <a id="linkedinBtn" target="_blank">LinkedIn</a>
+        <a id="instagramBtn" target="_blank">Instagram</a>
+      </div>
+
+      <button id="saveContactBtn" class="btn secondary">
+        Save Contact
+      </button>
+      <p style="margin-top: 12px; text-align:center; font-size: 0.75rem; opacity: 0.6;">
+  Powered by Ali Alsayadi NFC
+</p>
+
+    </div>
+  </div>
+
+  <script src="/card.js"></script>
+</body>
+</html>
