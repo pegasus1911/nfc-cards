@@ -2,12 +2,11 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const multer = require('multer');
-require('dotenv').config(); // load .env
+require('dotenv').config(); 
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ---------- ADMIN AUTH SETUP ----------
 const ADMIN_USER = process.env.ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.ADMIN_PASS || 'change-this-password';
 
@@ -29,7 +28,6 @@ function adminAuth(req, res, next) {
   return res.status(401).send('Authentication required');
 }
 
-// ---------- DATA & UPLOADS SETUP ----------
 const DATA_DIR = path.join(__dirname, 'data');
 const DATA_FILE = path.join(DATA_DIR, 'cards.json');
 const UPLOAD_DIR = path.join(__dirname, 'public', 'uploads');
@@ -41,7 +39,6 @@ if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 }
 
-// Multer storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, UPLOAD_DIR);
@@ -71,7 +68,6 @@ const upload = multer({
 
 let cards = [];
 
-// تحميل الكروت من الملف
 function loadCards() {
   try {
     const raw = fs.readFileSync(DATA_FILE, 'utf8');
@@ -99,7 +95,6 @@ function loadCards() {
   }
 }
 
-// حفظ الكروت
 function saveCards() {
   fs.writeFileSync(DATA_FILE, JSON.stringify(cards, null, 2), 'utf8');
   console.log(`Saved ${cards.length} cards to file.`);
@@ -107,14 +102,11 @@ function saveCards() {
 
 loadCards();
 
-// ---------- MIDDLEWARE ----------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ---------- API ROUTES ----------
 
-// list all cards (admin only)
 app.get('/api/cards', adminAuth, (req, res) => {
   const list = cards.map(c => ({
     slug: c.slug,
@@ -125,7 +117,6 @@ app.get('/api/cards', adminAuth, (req, res) => {
   res.json(list);
 });
 
-// get single card by slug (PUBLIC - used by /u/:slug)
 app.get('/api/cards/:slug', (req, res) => {
   const slug = (req.params.slug || '').toLowerCase();
   const card = cards.find(c => c.slug.toLowerCase() === slug);
@@ -137,7 +128,6 @@ app.get('/api/cards/:slug', (req, res) => {
   res.json(card);
 });
 
-// create new card (admin only, with optional avatar file)
 app.post('/api/cards', adminAuth, upload.single('avatarFile'), (req, res) => {
   const {
     slug,
@@ -150,7 +140,7 @@ app.post('/api/cards', adminAuth, upload.single('avatarFile'), (req, res) => {
     website,
     linkedin,
     instagram,
-    avatarUrl, // hidden field (optional)
+    avatarUrl, 
     rtl
   } = req.body;
 
@@ -193,7 +183,6 @@ app.post('/api/cards', adminAuth, upload.single('avatarFile'), (req, res) => {
   });
 });
 
-// update existing card (admin only, optional new avatar file)
 app.put('/api/cards/:slug', adminAuth, upload.single('avatarFile'), (req, res) => {
   const paramSlug = (req.params.slug || '').toLowerCase().trim();
   const index = cards.findIndex(c => c.slug.toLowerCase() === paramSlug);
@@ -246,19 +235,15 @@ app.put('/api/cards/:slug', adminAuth, upload.single('avatarFile'), (req, res) =
   });
 });
 
-// ---------- PAGES ----------
 
-// public card page
 app.get('/u/:slug', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'card.html'));
 });
 
-// admin page (protected)
 app.get('/admin', adminAuth, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
-// ---------- START SERVER ----------
 app.listen(PORT, () => {
   console.log(`Server listening on http://localhost:${PORT}`);
 });

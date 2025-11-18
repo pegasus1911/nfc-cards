@@ -187,7 +187,6 @@
 
     <form id="cardForm" enctype="multipart/form-data">
       <div class="field">
-        <!-- <label for="slug">Slug (unique URL)</label> -->
         <label for="slug">ID</label>
         <input id="slug" name="slug" required placeholder="ali-hasan" />
       </div>
@@ -240,7 +239,6 @@
         </div>
       </div>
 
-      <!-- RTL flag -->
       <div class="field">
         <label>
           <input type="checkbox" id="rtl" name="rtl" style="width:auto;margin-right:6px;accent-color:#d4af37;" />
@@ -248,7 +246,6 @@
         </label>
       </div>
 
-      <!-- hidden avatarUrl to keep existing path when editing -->
       <input type="hidden" id="avatarUrl" name="avatarUrl" />
 
       <div class="field">
@@ -263,7 +260,6 @@
     <div id="msg" class="msg"></div>
 
     <p class="tip">
-      <!-- Tip: After creating or updating a card, write its URL on the NFC tag. -->
     </p>
 
     <h2>Existing cards</h2>
@@ -384,7 +380,6 @@
       msg.textContent = editMode ? 'Updating...' : 'Saving...';
 
       const formData = new FormData(form);
-      // نخلي rtl يتبعت دايمًا (حتى لو unchecked)
       formData.set('rtl', rtlInput.checked ? 'on' : 'off');
 
       const url = editMode ? '/api/cards/' + editingSlug : '/api/cards';
